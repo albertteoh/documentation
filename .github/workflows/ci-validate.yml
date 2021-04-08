@@ -1,0 +1,26 @@
+name: Validate Documentation
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Broken Link Check
+    if: github.repository == 'albertteoh/documentation'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for broken links
+        id: link-report
+        uses: celinekurpershoek/link-checker@v1.0.1
+        with:
+          # Required:
+          #url: 'https://www.jaegertracing.io/docs/latest'
+          url: 'https://opentelemetry.io'
+          # optional:
+          honorRobotExclusions: false
+          ignorePatterns: 'github,google'
+          recursiveLinks: false # Check all URLs on all reachable pages (could take a while)
+      - name: Get the result
+        run: echo "${{steps.link-report.outputs.result}}"
